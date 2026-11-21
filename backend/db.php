@@ -1,9 +1,14 @@
 <?php
-$host = '127.0.0.1';   // Use IP to force TCP connection
-$port = 8889;          // Default MySQL port
-$user = 'root';         // Default XAMPP/MAMP user
-$pass = 'root';             // Default password (empty)
-$dbname = 'studysplan'; // اسم قاعدة البيانات اللي عندك
+require_once __DIR__ . '/helpers.php';
+
+// Settings come from environment variables or env.local (see env.example).
+// Defaults match the usual local XAMPP/MAMP setup, so nothing changes for existing installs.
+$env    = load_env_file(__DIR__ . '/../env.local');
+$host   = setting('DB_HOST', $env, '127.0.0.1');   // IP forces a TCP connection
+$port   = (int) setting('DB_PORT', $env, '8889');
+$user   = setting('DB_USER', $env, 'root');
+$pass   = setting('DB_PASS', $env, 'root');
+$dbname = setting('DB_NAME', $env, 'studysplan');
 
 try {
     // 1. Connect to MySQL server (without selecting DB yet)
@@ -70,10 +75,9 @@ try {
 
 } catch (PDOException $e) {
     http_response_code(500);
-    $errorMsg = "DB Connection/Setup failed: " . $e->getMessage();
-    file_put_contents(__DIR__ . '/debug_log.txt', $errorMsg . PHP_EOL, FILE_APPEND);
-    echo json_encode([
-        "error" => $errorMsg
-    ]);
+    log_server_error($e);
+    file_put_contents(__DIR__ . '/debug_log.txt', date('c') . ' DB setup failed: ' . $e->getMessage() . PHP_EOL, FILE_APPEND);
+    header('Content-Type: application/json');
+    echo json_encode(["error" => "Database connection failed. Check your DB settings in env.local."]);
     exit;
 }

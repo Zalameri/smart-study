@@ -5,3 +5,4 @@ backend/debug_log.txt
 backend/users.json
 
 .env.local
+__MACOSX/

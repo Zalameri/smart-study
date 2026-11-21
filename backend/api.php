@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/helpers.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -61,7 +62,8 @@ if ($method === 'get') {
         }
     } catch (PDOException $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'DB Error: ' . $e->getMessage()]);
+        log_server_error($e);
+        echo json_encode(['error' => 'Server error. Please try again.']);
     }
     exit;
 }
@@ -131,7 +133,8 @@ if ($method === 'set') {
     } catch (PDOException $e) {
         $pdo->rollBack();
         http_response_code(500);
-        echo json_encode(['error' => 'DB Error: ' . $e->getMessage()]);
+        log_server_error($e);
+        echo json_encode(['error' => 'Server error. Please try again.']);
     }
     exit;
 }

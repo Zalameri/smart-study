@@ -23,18 +23,9 @@ if (!$text) {
     exit;
 }
 
-// Load API Key from env.local
-$envFile = __DIR__ . '/../env.local';
-$apiKey = '';
-if (file_exists($envFile)) {
-    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), 'GEMINI_API_KEY=') === 0) {
-            $apiKey = trim(substr(trim($line), 15), '"\'');
-            break;
-        }
-    }
-}
+// Load API key from environment or env.local (never committed)
+require_once __DIR__ . '/helpers.php';
+$apiKey = setting('GEMINI_API_KEY', load_env_file(__DIR__ . '/../env.local'));
 
 if (!$apiKey) {
     http_response_code(500);
@@ -78,8 +69,9 @@ if ($response === false) {
 }
 
 if ($httpCode < 200 || $httpCode >= 300) {
-    http_response_code($httpCode);
-    echo $response;
+    error_log('[SmartStudy] Gemini API returned HTTP ' . $httpCode);
+    http_response_code(502);
+    echo json_encode(["error" => "The AI service returned an error (HTTP $httpCode). Try again later."]);
     exit;
 }
 

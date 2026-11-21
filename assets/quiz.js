@@ -134,6 +134,9 @@ document.getElementById('makeQuiz').onclick = () => {
   const mode = typeEl.value;
 
   currentQuiz = generateQuiz(facts, count, mode);
+  if (!currentQuiz.length) {
+    return alert('Could not build questions from these notes. Try adding longer sentences.');
+  }
   renderQuiz(currentQuiz);
   scoreEl.textContent = '';
 
@@ -164,7 +167,7 @@ function gradeQuiz(fromTimer = false) {
 
       const feedback = card.querySelector('.feedback') || document.createElement('div');
       feedback.className = 'feedback';
-      feedback.innerHTML = `Correct answer: <strong>${q.answer}</strong>`;
+      feedback.innerHTML = `Correct answer: <strong>${escapeHtml(q.answer)}</strong>`;
       card.appendChild(feedback);
 
     } else if (q.kind === 'tf') {
@@ -178,12 +181,12 @@ function gradeQuiz(fromTimer = false) {
 
     } else if (q.kind === 'fitb') {
       const input = card.querySelector('input[data-idx]');
-      const val = input ? input.value.trim().toLowerCase() : '';
+      const val = input ? cleanWord(input.value).toLowerCase() : '';
       if (val === q.answer.toLowerCase()) isCorrect = true;
 
       const feedback = card.querySelector('.feedback') || document.createElement('div');
       feedback.className = 'feedback';
-      feedback.innerHTML = `Correct answer: <strong>${q.answer}</strong>`;
+      feedback.innerHTML = `Correct answer: <strong>${escapeHtml(q.answer)}</strong>`;
       card.appendChild(feedback);
     }
 
@@ -218,92 +221,7 @@ document.getElementById('retryQuiz').onclick = () => {
   renderQuiz(currentQuiz);
 };
 
-// ---------- Quiz generation helpers ----------
-function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function generateQuiz(facts, count, mode) {
-  const items = [];
-  const pool = [...facts];
-
-  for (let i = 0; i < count; i++) {
-    const fact = pool[Math.floor(Math.random() * pool.length)];
-    const kind =
-      mode === 'mix'
-        ? ['mcq', 'tf', 'fitb'][Math.floor(Math.random() * 3)]
-        : mode;
-
-    if (kind === 'mcq') {
-      const tokens = fact.split(' ');
-      const idx = Math.max(0, Math.floor(tokens.length / 3));
-      const answer = tokens[idx].replace(/[^a-z0-9]/gi, '');
-      if (!answer) {
-        i--;
-        continue;
-      }
-      const question = `Fill the missing word: ${tokens
-        .map((t, j) => (j === idx ? '____' : t))
-        .join(' ')}`;
-
-      const distract = shuffle(
-        facts.filter(f => f !== fact)
-      )
-        .slice(0, 8)
-        .map(s => {
-          const w = (s.split(' ')[0] || '').replace(/[^a-z0-9]/gi, '');
-          return w && w.toLowerCase() !== answer.toLowerCase() ? w : null;
-        })
-        .filter(Boolean);
-
-      const options = shuffle([answer, ...distract.slice(0, 3)]);
-      items.push({ kind: 'mcq', question, options, answer });
-    } else if (kind === 'tf') {
-      const isTrue = Math.random() > 0.5;
-      const qText = isTrue ? fact : mutate(fact);
-      items.push({
-        kind: 'tf',
-        question: `True or False: ${qText}`,
-        answer: isTrue
-      });
-    } else if (kind === 'fitb') {
-      const words = fact.split(' ');
-      const idx = Math.min(
-        words.length - 1,
-        Math.max(1, Math.floor(words.length * 0.6))
-      );
-      const answer = words[idx].replace(/[^a-z0-9]/gi, '');
-      const question = `Fill in the blank: ${words
-        .map((w, i) => (i === idx ? '____' : w))
-        .join(' ')}`;
-      items.push({ kind: 'fitb', question, answer });
-    }
-  }
-
-  return items;
-}
-
-function mutate(s) {
-  if (/\d+/.test(s)) return s.replace(/\d+/, m => String(Number(m) + 1));
-  return s.replace(
-    /(always|never|increases|decreases|maximum|minim(?:um)|true|false)/i,
-    m =>
-    ({
-      always: 'sometimes',
-      never: 'often',
-      increases: 'decreases',
-      decreases: 'increases',
-      maximum: 'minimum',
-      minimum: 'maximum',
-      true: 'false',
-      false: 'true'
-    }[m.toLowerCase()] || 'not')
-  );
-}
+// Quiz generation helpers live in assets/quiz-utils.js (shuffle, generateQuiz, mutate, escapeHtml, cleanWord)
 
 // ---------- Render Quiz UI ----------
 function renderQuiz(items) {
@@ -313,17 +231,17 @@ function renderQuiz(items) {
     card.className = 'card quiz-card';
     card.dataset.idx = idx;
     card.style.marginBottom = '10px';
-    card.innerHTML = `<h3 style="margin-top:0">Q${idx + 1}. ${q.question}</h3>`;
+    card.innerHTML = `<h3 style="margin-top:0">Q${idx + 1}. ${escapeHtml(q.question)}</h3>`;
 
     if (q.kind === 'mcq') {
       const box = document.createElement('div');
       q.options.forEach(opt => {
-        const id = `mcq${idx}_${opt}`;
+        const id = `mcq${idx}_${idx}_${q.options.indexOf(opt)}`;
         const row = document.createElement('div');
         row.style.margin = '6px 0';
         row.innerHTML =
-          `<input type="radio" id="${id}" name="mcq${idx}" value="${opt}" data-idx="${idx}" /> ` +
-          `<label for="${id}">${opt}</label>`;
+          `<input type="radio" id="${id}" name="mcq${idx}" value="${escapeHtml(opt)}" data-idx="${idx}" /> ` +
+          `<label for="${id}">${escapeHtml(opt)}</label>`;
         box.appendChild(row);
       });
       card.appendChild(box);
