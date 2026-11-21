@@ -28,4 +28,10 @@ check('rejects short password', validate_password('short') !== null);
 check('accepts 8+ characters', validate_password('longenough') === null);
 check('counts Arabic characters correctly', validate_password('كلمةمرور') === null);
 
+$ch = row_to_client('chapters', ['id' => 'h1', 'course_id' => 'c1']);
+check('chapter rows get courseId', $ch['courseId'] === 'c1');
+$sc = row_to_client('schedule', ['course_id' => 'c1', 'start_time' => '09:00', 'end_time' => '10:00']);
+check('schedule rows get courseId/start/end', $sc['courseId'] === 'c1' && $sc['start'] === '09:00' && $sc['end'] === '10:00');
+check('course rows are unchanged', row_to_client('courses', ['id' => 'c1', 'name' => 'x']) === ['id' => 'c1', 'name' => 'x']);
+
 exit($failures ? 1 : 0);

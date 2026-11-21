@@ -56,3 +56,27 @@ function log_server_error(Throwable $e): void
 {
     error_log('[SmartStudy] ' . $e->getMessage());
 }
+
+/**
+ * Convert a database row to the field names the browser code uses.
+ * The tables use snake_case (course_id, start_time, end_time) but the JavaScript
+ * reads courseId / start / end. Without this, saved chapters and schedule items
+ * lose their course after a reload, so the quiz finds no chapters.
+ */
+function row_to_client(string $table, array $row): array
+{
+    if ($table === 'chapters' || $table === 'schedule') {
+        if (array_key_exists('course_id', $row)) {
+            $row['courseId'] = $row['course_id'];
+        }
+    }
+    if ($table === 'schedule') {
+        if (array_key_exists('start_time', $row)) {
+            $row['start'] = $row['start_time'];
+        }
+        if (array_key_exists('end_time', $row)) {
+            $row['end'] = $row['end_time'];
+        }
+    }
+    return $row;
+}

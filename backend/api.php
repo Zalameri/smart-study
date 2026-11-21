@@ -58,6 +58,7 @@ if ($method === 'get') {
                     }
                 }
             }
+            $data = array_map(fn($row) => row_to_client($table, $row), $data);
             echo json_encode($data);
         }
     } catch (PDOException $e) {
