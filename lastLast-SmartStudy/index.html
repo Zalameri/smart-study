@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Planner · Dashboard</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="icon" href="assets/favicon.png" />
+</head>
+
+<body>
+  <div class="threads-container"></div>
+  <!-- HEADER -->
+  <header class="topbar">
+    <a class="brand" href="index.html">📚 Study Planner</a>
+    <nav class="nav">
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="chapters.html">Chapters</a>
+      <a href="quiz.html">Quiz</a>
+    </nav>
+    <button id="themeToggle" class="iconbtn" aria-label="Toggle theme">🌓</button>
+  </header>
+
+  <!-- HERO (we’ll make it slider in section 2) -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-tag">Smart Study Planner</p>
+
+      <h1>Plan your week, summarize chapters, and get exam-ready with AI 🚀</h1>
+
+      <p class="hero-sub">
+        Upload your PDF chapters, let AI summarize them, save notes, and generate quizzes in seconds.
+      </p>
+
+      <div class="hero-actions">
+        <a href="schedule.html" class="btn-hero primary">Open Schedule</a>
+        <a href="chapters.html" class="btn-hero ghost">Summarize Chapters</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <main class="container grid">
+    <section class="card span-2">
+      <h2>Courses</h2>
+      <div class="row">
+        <input id="courseName" placeholder="Course name (e.g., Calculus)" />
+        <input id="courseCode" placeholder="Code (e.g., MATH 101)" />
+        <div class="color-picker" id="courseColorPicker">
+          <button type="button" class="color-dot is-selected" data-value="🔵" style="--dot-color:#3b82f6" aria-label="Blue course color"></button>
+          <button type="button" class="color-dot" data-value="🟣" style="--dot-color:#a855f7" aria-label="Purple course color"></button>
+          <button type="button" class="color-dot" data-value="🟢" style="--dot-color:#22c55e" aria-label="Green course color"></button>
+          <button type="button" class="color-dot" data-value="🟠" style="--dot-color:#fb923c" aria-label="Orange course color"></button>
+          <button type="button" class="color-dot" data-value="🔴" style="--dot-color:#ef4444" aria-label="Red course color"></button>
+          <button type="button" class="color-dot" data-value="🟡" style="--dot-color:#eab308" aria-label="Yellow course color"></button>
+        </div>
+        <input type="hidden" id="courseColor" value="🔵" />
+        <button class="primary" id="addCourse">Add</button>
+      </div>
+      <div id="courseList" class="list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Today’s Plan</h2>
+      <div id="todayPlan" class="list"></div>
+      <a class="link" href="schedule.html">Open full schedule →</a>
+    </section>
+
+    <section class="card">
+      <h2>Quick Actions</h2>
+      <div class="quick">
+        <a class="pill" href="chapters.html">✍ Add Chapter</a>
+        <a class="pill" href="quiz.html">🧠 Start Quiz</a>
+      </div>
+    </section>
+
+    <!-- NEW: Focus / Pomodoro -->
+    <section class="card span-2">
+      <h2>Focus Session ⏰</h2>
+      <p class="muted" style="margin-top:0">
+        Use a short, focused block to study one thing without distractions.
+      </p>
+      <div class="focus-wrapper">
+        <div id="focusTime" class="focus-time">25:00</div>
+        <div class="row wrap">
+          <label>
+            Length:
+            <input type="number" id="focusMinutes" min="10" max="90" value="25" />
+            <span class="muted small">minutes</span>
+          </label>
+        </div>
+        <div class="row wrap" style="margin-top:8px;">
+          <button class="primary" id="focusStart">Start</button>
+          <button class="ghost" id="focusPause">Pause</button>
+          <button class="ghost" id="focusReset">Reset</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Made with ❤ to study smarter</footer>
+
+  <script src="assets/threads.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    SP.init().then(() => {
+      // Courses
+      const nameEl = document.getElementById('courseName');
+      const codeEl = document.getElementById('courseCode');
+      const colorEl = document.getElementById('courseColor');
+      const colorPickerEl = document.getElementById('courseColorPicker');
+
+      if (colorPickerEl && colorEl) {
+        const dots = Array.from(colorPickerEl.querySelectorAll('.color-dot'));
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            dots.forEach(d => d.classList.remove('is-selected'));
+            dot.classList.add('is-selected');
+            colorEl.value = dot.dataset.value || '🔵';
+          });
+        });
+      }
+
+      document.getElementById('addCourse').onclick = () => {
+        if (!nameEl.value.trim()) return alert('Course name required');
+        SP.data.addCourse({
+          name: nameEl.value.trim(),
+          code: codeEl.value.trim(),
+          color: colorEl.value
+        });
+        nameEl.value = codeEl.value = '';
+        render();
+      };
+
+      function renderCourses() {
+        const list = document.getElementById('courseList');
+        list.innerHTML = '';
+        SP.data.courses().forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'listitem';
+          div.innerHTML = `
+        <span>${c.color} <strong>${c.name}</strong> <small>${c.code || ''}</small></span>
+        <span class="actions">
+          <button data-id="${c.id}" class="ghost del">Delete</button>
+        </span>`;
+          div.querySelector('.del').onclick = () => {
+            SP.data.deleteCourse(c.id);
+            render();
+          };
+          list.appendChild(div);
+        });
+      }
+
+      function renderToday() {
+        const list = document.getElementById('todayPlan');
+        list.innerHTML = '';
+        SP.data.todayEntries().forEach(e => {
+          const course = SP.data.courseById(e.courseId);
+          const row = document.createElement('div');
+          row.className = 'listitem';
+          row.innerHTML = `
+        <span>${course?.color || '📘'} <strong>${course?.name || 'Course'}</strong>
+        <small>${e.start}–${e.end} • ${e.place || ''}</small></span>`;
+          list.appendChild(row);
+        });
+
+        if (!list.childElementCount) {
+          list.innerHTML = '<p class="muted">No entries today.</p>';
+        }
+      }
+
+      function render() {
+        renderCourses();
+        renderToday();
+      }
+
+      render();
+
+      // ---------- Focus / Pomodoro ----------
+      const focusTimeEl = document.getElementById('focusTime');
+      const focusMinutesEl = document.getElementById('focusMinutes');
+      const focusStartBtn = document.getElementById('focusStart');
+      const focusPauseBtn = document.getElementById('focusPause');
+      const focusResetBtn = document.getElementById('focusReset');
+
+      let focusSeconds = 25 * 60;
+      let focusTimerId = null;
+      let focusRunning = false;
+
+      function updateFocusDisplay() {
+        const m = String(Math.floor(focusSeconds / 60)).padStart(2, '0');
+        const s = String(focusSeconds % 60).padStart(2, '0');
+        focusTimeEl.textContent = `${m}:${s}`;
+      }
+
+      function startFocus() {
+        if (focusRunning) return;
+        let minutes = parseInt(focusMinutesEl.value, 10);
+        if (!minutes || minutes < 10) minutes = 25;
+        if (focusSeconds === 25 * 60 || focusSeconds === 0) {
+          focusSeconds = minutes * 60;
+        }
+        updateFocusDisplay();
+        focusRunning = true;
+        focusTimerId = setInterval(() => {
+          focusSeconds -= 1;
+          if (focusSeconds <= 0) {
+            focusSeconds = 0;
+            updateFocusDisplay();
+            clearInterval(focusTimerId);
+            focusRunning = false;
+            alert('Focus session finished! Take a short break 🧠');
+            return;
+          }
+          updateFocusDisplay();
+        }, 1000);
+      }
+
+      function pauseFocus() {
+        if (focusTimerId) clearInterval(focusTimerId);
+        focusTimerId = null;
+        focusRunning = false;
+      }
+
+      function resetFocus() {
+        pauseFocus();
+        const minutes = parseInt(focusMinutesEl.value, 10) || 25;
+        focusSeconds = minutes * 60;
+        updateFocusDisplay();
+      }
+
+      focusStartBtn.onclick = startFocus;
+      focusPauseBtn.onclick = pauseFocus;
+      focusResetBtn.onclick = resetFocus;
+
+      // initial display
+      updateFocusDisplay();
+    });
+  </script>
+</body>
+
+</html>

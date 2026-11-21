@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Planner · Chapters</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <!-- PDF.js from CDN (no install needed) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+<div class="threads-container"></div>
+<header class="topbar">
+  <a class="brand" href="index.html">📚 Study Planner</a>
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="schedule.html">Schedule</a>
+    <a href="chapters.html" class="active">Chapters</a>
+    <a href="quiz.html">Quiz</a>
+  </nav>
+  <button id="themeToggle" class="iconbtn">🌓</button>
+</header>
+
+<main class="container grid">
+  <!-- Add / Import Chapter -->
+  <section class="card span-2">
+    <h2>Add Chapter</h2>
+    <div class="row wrap">
+      <select id="cCourse"></select>
+      <input id="cTitle" placeholder="Chapter title (e.g., Limits – Chapter 2)" />
+      <textarea id="cNotes" rows="6" placeholder="Summary / Notes for this chapter
+- Definition: ...
+- Property: ...
+- Example: ...
+"></textarea>
+
+      <!-- NEW: PDF upload -->
+      <div class="row wrap" style="margin-top:8px;">
+        <input id="pdfFile" type="file" accept="application/pdf" />
+        <button class="ghost" id="loadPdf">Import text from PDF</button>
+        <button class="primary" id="summarizeAi">Summarize with AI</button>
+        <small class="muted">We read the PDF on your device and fill the notes box automatically.</small>
+      </div>
+
+      <button class="primary" id="saveChapter">Save Chapter</button>
+    </div>
+  </section>
+
+  <!-- List of chapters -->
+  <section class="card">
+    <h2>Your Chapters</h2>
+    <input id="search" placeholder="Search by course, title, or text..." />
+    <div id="chapterList" class="list"></div>
+  </section>
+
+  <!-- Selected chapter summary -->
+  <section class="card">
+    <h2>Chapter Summary</h2>
+    <div id="chapterSummary" class="chapter-summary muted">
+      Select a chapter from the list to view its summary.
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  Tip: you can upload a PDF chapter, then save it and generate quizzes from it.
+</footer>
+
+<script src="assets/threads.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/chapters.js"></script>
+</body>
+</html>

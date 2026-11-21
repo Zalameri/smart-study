@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Planner · Schedule</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="threads-container"></div>
+  <header class="topbar">
+    <a class="brand" href="index.html">📚 Study Planner</a>
+    <nav class="nav">
+      <a href="index.html">Dashboard</a>
+      <a href="schedule.html" class="active">Schedule</a>
+      <a href="chapters.html">Chapters</a>
+      <a href="quiz.html">Quiz</a>
+    </nav>
+    <button id="themeToggle" class="iconbtn">🌓</button>
+  </header>
+
+  <main class="container grid">
+    <!-- CLASSES FORM -->
+    <section class="card">
+      <h2>Class Schedule</h2>
+      <div class="row wrap">
+        <select id="sCourse"></select>
+        <select id="sDay">
+          <option>Sunday</option>
+          <option>Monday</option>
+          <option>Tuesday</option>
+          <option>Wednesday</option>
+          <option>Thursday</option>
+          <option>Friday</option>
+          <option>Saturday</option>
+        </select>
+        <input id="sStart" type="time" />
+        <input id="sEnd" type="time" />
+        <input id="sPlace" placeholder="Room / Building" />
+        <input id="sNote" placeholder="Note (optional)" />
+        <button class="primary" id="addSlot">Add Class</button>
+      </div>
+    </section>
+
+    <!-- STUDY FORM -->
+    <section class="card">
+      <h2>Study Plan</h2>
+      <div class="row wrap">
+        <select id="stCourse">
+          <!-- optional: link to a course -->
+        </select>
+        <input id="stTitle" placeholder="Study topic (e.g., Chapter 3 review)" />
+        <select id="stDay">
+          <option>Sunday</option>
+          <option>Monday</option>
+          <option>Tuesday</option>
+          <option>Wednesday</option>
+          <option>Thursday</option>
+          <option>Friday</option>
+          <option>Saturday</option>
+        </select>
+        <input id="stStart" type="time" />
+        <input id="stEnd" type="time" />
+        <input id="stPlace" placeholder="Place (e.g., Library, Home)" />
+        <input id="stNote" placeholder="Note (e.g., Pomodoro, Quiz)" />
+        <button class="ghost" id="addStudy">Add Study</button>
+      </div>
+    </section>
+
+    <!-- WEEK VIEW -->
+    <section class="card span-2">
+      <h2>Week View (Classes + Study)</h2>
+      <p class="muted" style="margin-top:0">
+        <span class="tag tag-class">Class</span>
+        <span class="tag tag-study">Study</span>
+      </p>
+      <div id="week" class="week"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Organize both your classes and your study blocks in one place ✨
+  </footer>
+
+  <script src="assets/threads.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/schedule.js"></script>
+</body>
+</html>

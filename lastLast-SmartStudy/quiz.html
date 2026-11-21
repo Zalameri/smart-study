@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Planner · Quiz</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="threads-container"></div>
+  <header class="topbar">
+    <a class="brand" href="index.html">📚 Study Planner</a>
+    <nav class="nav">
+      <a href="index.html">Dashboard</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="chapters.html">Chapters</a>
+      <a href="quiz.html" class="active">Quiz</a>
+    </nav>
+    <button id="themeToggle" class="iconbtn">🌓</button>
+  </header>
+
+  <main class="container grid">
+    <section class="card span-2">
+      <h2>Generate Quiz</h2>
+      <div class="row wrap">
+        <select id="qCourse"></select>
+        <input id="qCount" type="number" min="3" max="50" value="10" />
+        <select id="qType">
+          <option value="mix">Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="tf">True/False</option>
+          <option value="fitb">Fill-in-the-Blank</option>
+        </select>
+        <button class="primary" id="makeQuiz">Make Quiz</button>
+      </div>
+
+      <!-- Chapter selector -->
+      <div id="chapterFilter" class="chapter-filter">
+        <p class="muted">Choose a course to select which chapters to use.</p>
+      </div>
+
+      <!-- Exam mode controls -->
+      <div class="exam-controls">
+        <label>
+          <input type="checkbox" id="examMode" />
+          <span>Exam Mode (with timer)</span>
+        </label>
+        <input type="number" id="examMinutes" min="5" max="180" value="30" />
+        <span class="muted small">minutes</span>
+        <span id="examTimer" class="exam-timer">--:--</span>
+      </div>
+    </section>
+
+    <section class="card span-2">
+      <h2>Quiz</h2>
+      <div id="quizArea"></div>
+      <div class="row" style="margin-top:10px;">
+        <button id="submitQuiz" class="primary">Submit</button>
+        <button id="retryQuiz" class="ghost">Retry</button>
+      </div>
+      <p id="score" class="score"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Practice mode shows instant feedback. Exam mode adds a timer and still shows answers after submission.
+  </footer>
+
+  <script src="assets/threads.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/quiz.js"></script>
+</body>
+</html>
