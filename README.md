@@ -38,7 +38,7 @@ Smart Study helps a student organise a semester:
 **You need:** PHP 8+ with the `pdo_mysql` extension, and a running MySQL server (XAMPP or MAMP both work).
 
 ```bash
-git clone https://github.com/ghadahh2004/smart-study.git
+git clone https://github.com/Zalameri/smart-study.git
 cd smart-study
 cp env.example env.local      # then edit env.local if your MySQL settings differ
 php -S localhost:8000         # run from the project root
