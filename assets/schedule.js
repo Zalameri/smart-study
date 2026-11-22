@@ -55,14 +55,14 @@ document.getElementById('addStudy').onclick = () => {
 function renderCourseOptions() {
   const options = ['<option value="">Course… (optional)</option>']
     .concat(SP.data.courses().map(
-      c => `<option value="${c.id}">${c.color} ${c.name}</option>`
+      c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.color)} ${escapeHtml(c.name)}</option>`
     ))
     .join('');
 
   // classes select
   sCourse.innerHTML = '<option value="">Course…</option>' +
     SP.data.courses().map(
-      c => `<option value="${c.id}">${c.color} ${c.name}</option>`
+      c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.color)} ${escapeHtml(c.name)}</option>`
     ).join('');
 
   // study select (optional course)
@@ -98,13 +98,13 @@ function renderWeek() {
 
       slot.innerHTML = `
         <div class="slot-header">
-          <span class="slot-badge">${badge}</span>
+          <span class="slot-badge">${escapeHtml(badge)}</span>
         </div>
-        <strong>${label}</strong><br>
-        <small>${e.start}–${e.end}${e.place ? ' • ' + e.place : ''}</small>
-        ${e.note ? `<br><small>${e.note}</small>` : ''}
+        <strong>${escapeHtml(label)}</strong><br>
+        <small>${escapeHtml(e.start)}–${escapeHtml(e.end)}${e.place ? ' • ' + escapeHtml(e.place) : ''}</small>
+        ${e.note ? `<br><small>${escapeHtml(e.note)}</small>` : ''}
         <div style="text-align:right;margin-top:6px">
-          <button data-id="${e.id}" class="ghost slot-del">Delete</button>
+          <button data-id="${escapeHtml(e.id)}" class="ghost slot-del">Delete</button>
         </div>
       `;
 

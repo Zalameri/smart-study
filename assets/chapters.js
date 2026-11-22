@@ -57,7 +57,7 @@ if (loadPdfBtn) {
         <h3 style="margin-top:0">Preview from PDF</h3>
         <p><strong>Text length:</strong> ${text.length} characters</p>
         <p><strong>First extracted points (used for quiz):</strong></p>
-        <ul>${points.slice(0, 8).map(p => `<li>${p}</li>`).join('') || '<li class="muted">No clear points detected. Try adding bullet points manually.</li>'}</ul>
+        <ul>${points.slice(0, 8).map(p => `<li>${escapeHtml(p)}</li>`).join('') || '<li class="muted">No clear points detected. Try adding bullet points manually.</li>'}</ul>
         <p class="muted">Click “Save Chapter” to store this as a chapter and use it in quizzes.</p>
       `;
     } catch (err) {
@@ -93,7 +93,7 @@ function renderCourseOptions() {
   const list = Array.isArray(courses) ? courses : [];
 
   select.innerHTML = '<option value="">Select a Course...</option>' +
-    list.map(c => `<option value="${c.id}">${c.name} (${c.code})</option>`).join('');
+    list.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${escapeHtml(c.code)})</option>`).join('');
 }
 
 // ---------- RENDER CHAPTER LIST ----------
@@ -119,9 +119,9 @@ function renderList() {
 
       item.innerHTML = `
         <span>
-          ${course?.color || '📘'}
-          <strong>${ch.title}</strong>
-          <small>${course?.name || ''}</small>
+          ${escapeHtml(course?.color || '📘')}
+          <strong>${escapeHtml(ch.title)}</strong>
+          <small>${escapeHtml(course?.name || '')}</small>
           <small> · ${count} point${count === 1 ? '' : 's'}</small>
         </span>
         <span class="actions">
@@ -178,15 +178,16 @@ function renderSummary() {
   const notesHtml = (ch.notes || '')
     .split('\n')
     .map(line => line.trim())
-    .map(line => line ? line.replace(/^(-|\*|\d+\.|•)\s*/, '• ') : '')
+    // Same output as before escaping was added: only list lines get a bullet.
+    .map(line => escapeHtml(line).replace(/^(-|\*|\d+\.|•)\s*/, '• '))
     .join('<br>');
 
-  const pointsList = (ch.points || []).map(p => `<li>${p}</li>`).join('');
+  const pointsList = (ch.points || []).map(p => `<li>${escapeHtml(p)}</li>`).join('');
 
   summaryEl.classList.remove('muted');
   summaryEl.innerHTML = `
-    <h3 style="margin-top:0">${course?.color || '📘'} ${ch.title}</h3>
-    <p><strong>Course:</strong> ${course?.name || '—'}</p>
+    <h3 style="margin-top:0">${escapeHtml(course?.color || '📘')} ${escapeHtml(ch.title)}</h3>
+    <p><strong>Course:</strong> ${escapeHtml(course?.name || '—')}</p>
     <p><strong>Full Summary / Notes:</strong></p>
     <div class="summary-box">${notesHtml || '<span class="muted">No notes.</span>'}</div>
     <p><strong>Extracted Points (used for Quiz):</strong></p>
@@ -254,7 +255,7 @@ document.getElementById("summarizeAi").onclick = async () => {
       summaryEl.classList.remove('muted');
       summaryEl.innerHTML = `
         <h3 style="margin-top:0">AI Summary</h3>
-        <div class="summary-box">${summary.replace(/\n/g, '<br>')}</div>
+        <div class="summary-box">${escapeHtml(summary).replace(/\n/g, '<br>')}</div>
         <p class="muted">Click \"Save Chapter\" to store this summary and use it in quizzes.</p>
       `;
       alert("AI summary complete!");
