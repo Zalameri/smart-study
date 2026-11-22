@@ -21,7 +21,7 @@ function renderCourseOptions() {
   courseSel.innerHTML =
     '<option value="">Course…</option>' +
     SP.data.courses()
-      .map(c => `<option value="${c.id}">${c.color} ${c.name}</option>`)
+      .map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.color)} ${escapeHtml(c.name)}</option>`)
       .join('');
 }
 
@@ -55,8 +55,8 @@ function renderChapterFilter() {
     const row = document.createElement('label');
     row.className = 'chapter-option';
     row.innerHTML = `
-      <input type="checkbox" value="${ch.id}" checked />
-      <span>${ch.title}</span>
+      <input type="checkbox" value="${escapeHtml(ch.id)}" checked />
+      <span>${escapeHtml(ch.title)}</span>
     `;
     list.appendChild(row);
   });
