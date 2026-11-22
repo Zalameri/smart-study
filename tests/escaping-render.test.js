@@ -41,3 +41,15 @@ test('escapeHtml neutralises a course name used in an option tag', () => {
   assert.ok(!html.includes('<script>'));
   assert.ok(!html.includes('" onmouseover'));
 });
+
+test('chapter notes keep bullets only on list lines and stay escaped', () => {
+  const { escapeHtml } = require('../assets/quiz-utils.js');
+  const src = read('assets/chapters.js');
+  const line = src.split('\n').find(l => l.includes('.map(line => escapeHtml(line)'));
+  assert.ok(line, 'notes renderer must escape each line before adding bullets');
+  const render = (l) => escapeHtml(l).replace(/^(-|\*|\d+\.|•)\s*/, '• ');
+  assert.strictEqual(render('- first point'), '• first point');
+  assert.strictEqual(render('1. step'), '• step');
+  assert.strictEqual(render('plain sentence'), 'plain sentence');
+  assert.strictEqual(render('<img src=x onerror=alert(1)>'), '&lt;img src=x onerror=alert(1)&gt;');
+});

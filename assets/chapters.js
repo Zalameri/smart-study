@@ -178,7 +178,8 @@ function renderSummary() {
   const notesHtml = (ch.notes || '')
     .split('\n')
     .map(line => line.trim())
-    .map(line => line ? '• ' + escapeHtml(line.replace(/^(-|\*|\d+\.|•)\s*/, '')) : '')
+    // Same output as before escaping was added: only list lines get a bullet.
+    .map(line => escapeHtml(line).replace(/^(-|\*|\d+\.|•)\s*/, '• '))
     .join('<br>');
 
   const pointsList = (ch.points || []).map(p => `<li>${escapeHtml(p)}</li>`).join('');
