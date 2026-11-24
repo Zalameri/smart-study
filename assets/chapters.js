@@ -86,7 +86,7 @@ async function extractTextFromPdf(file) {
 
 // ---------- RENDER COURSES ----------
 function renderCourseOptions() {
-  const select = document.getElementById('courseSelect');
+  const select = document.getElementById('cCourse');
   if (!select) return;
   const courses = SP.data.courses() || [];
   // Ensure courses is an array
