@@ -98,3 +98,7 @@ Screenshots have not been added yet. *(Contributions of real screenshots from th
 ## 📝 Notes on this version
 
 Recent maintenance: the project was moved to the repository root, hard-coded database settings moved to configuration, database error details are no longer sent to the browser, sessions are regenerated on login, passwords must be at least 8 characters on registration, and quiz generation now supports Arabic text (it previously froze on it).
+
+## Portfolio
+
+Full case study: <https://zalameri.github.io/project.html?p=smart-study>
