@@ -47,6 +47,13 @@ php -S localhost:8000         # run from the project root
 Open <http://localhost:8000/register.html> and create an account.
 The database (`studysplan` by default) and its tables are created automatically.
 
+### Try it without PHP or MySQL (demo mode)
+The front end can run on its own with sample data. Serve the folder with any static server, for example
+`python3 -m http.server 8000`, and open <http://localhost:8000/index.html?demo=1>.
+In demo mode (`assets/demo-backend.js`) requests to `backend/*.php` are answered in the browser, nothing is sent anywhere,
+and the data lives only in that tab's `sessionStorage` (`?demo=0` switches it off). AI summaries are disabled in the demo.
+It is meant for static hosting such as GitHub Pages; a hosted demo is not set up yet (the repository owner has to enable Pages).
+
 ### Configuration (`env.local`)
 The defaults match a typical MAMP setup (`127.0.0.1:8889`, user `root`). Change them in `env.local`, which is git-ignored:
 
