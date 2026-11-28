@@ -22,6 +22,7 @@ Smart Study helps a student organise a semester:
 - 📖 **Chapters & notes**: write notes per chapter and keep key points.
 - 🤖 **AI summary (optional)**: summarise a chapter's notes with the Gemini API when you provide your own key.
 - 📝 **Quizzes from your own notes**: multiple-choice, true/false and fill-in-the-blank questions are generated from your chapter points, with an optional timed *exam mode*. Works with English and Arabic notes.
+- 🔁 **Review today (spaced repetition)**: on the Chapters page, the points of your chapters come back as flashcards. After each one you rate it *Forgot / Hard / Good / Easy* and the SM-2 algorithm schedules when you see it again. Progress is stored in this browser (localStorage), not in the database.
 - ⚙️ **Settings** saved per user, and an animated background.
 
 ## 🧰 Built with
@@ -61,7 +62,7 @@ The defaults match a typical MAMP setup (`127.0.0.1:8889`, user `root`). Change 
 ## 🧪 Tests
 
 ```bash
-node --test tests/*.test.js   # quiz logic (escaping, Arabic support, no infinite loops)
+node --test tests/*.test.js   # quiz logic, SM-2 scheduling, escaping checks
 php tests/run.php             # configuration loading and password rules
 ```
 
@@ -76,6 +77,7 @@ smart-study/
 ├── assets/
 │   ├── app.js, chapters.js, schedule.js    page logic
 │   ├── quiz.js, quiz-utils.js              quiz UI and testable quiz generation
+│   ├── sm2.js, review.js                   SM-2 scheduling (tested) and the Review today card
 │   ├── threads.js, style.css               background animation and styles
 ├── backend/
 │   ├── auth.php, api.php, summarize.php    JSON endpoints
@@ -86,7 +88,11 @@ smart-study/
 
 ## 🖼️ Screenshots
 
-Screenshots have not been added yet. *(Contributions of real screenshots from the running app are welcome.)*
+Review mode on a phone-sized screen (real app UI in headless Chromium, filled with two sample chapter points that include HTML to show it is escaped):
+
+![Review today on a phone](docs/screenshots/review-mode-phone.png)
+
+More screenshots have not been added yet.
 
 ## 🔭 Ideas for future improvements
 
