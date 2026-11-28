@@ -16,7 +16,7 @@ const RAW_FIELDS = [
   "' + e.place", '${label}', '${badge}', '${p}',
 ];
 
-for (const file of ['assets/quiz.js', 'assets/chapters.js', 'assets/schedule.js']) {
+for (const file of ['assets/quiz.js', 'assets/chapters.js', 'assets/schedule.js', 'assets/review.js']) {
   test(`${file} does not insert raw user fields into HTML templates`, () => {
     const src = read(file);
     for (const field of RAW_FIELDS) {
@@ -52,4 +52,16 @@ test('chapter notes keep bullets only on list lines and stay escaped', () => {
   assert.strictEqual(render('1. step'), '• step');
   assert.strictEqual(render('plain sentence'), 'plain sentence');
   assert.strictEqual(render('<img src=x onerror=alert(1)>'), '&lt;img src=x onerror=alert(1)&gt;');
+});
+
+test('review.js escapes the chapter title and point it shows', () => {
+  const src = read('assets/review.js');
+  assert.ok(src.includes('escapeHtml(item.point)') && src.includes('escapeHtml(item.title)'));
+  assert.ok(!src.includes('${item.point}') && !src.includes('${item.title}'));
+});
+
+test('chapters.html loads sm2.js before review.js', () => {
+  const html = read('chapters.html');
+  assert.ok(html.indexOf('assets/sm2.js') !== -1 && html.indexOf('assets/sm2.js') < html.indexOf('assets/review.js'));
+  assert.ok(html.includes('id="reviewBox"'));
 });
